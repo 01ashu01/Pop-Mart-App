@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "pop-mart-tmp",
-    "slug": "pop-mart-tmp",
+    "name": "Pop Mart",
+    "slug": "pop-mart",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "popmarttmp",
+    "scheme": "popmart",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"

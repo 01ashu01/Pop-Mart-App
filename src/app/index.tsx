@@ -1,98 +1,110 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+﻿import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Animated } from 'react-native';
+import { useRouter } from 'expo-router';
+import { PopMartLogo } from '../components/PopMartLogo';
+import { COLORS } from '../constants/theme';
+import { useAuth } from '../context/AuthContext';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+export default function SplashScreen() {
+  const router = useRouter();
+  const { isLoggedIn, isLoading } = useAuth();
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+  useEffect(() => {
+    // Start entrance animation
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 6,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Navigate after short delay
+    const timer = setTimeout(() => {
+      if (!isLoading) {
+        if (isLoggedIn) {
+          router.replace('/(tabs)');
+        } else {
+          router.replace('/welcome');
+        }
+      }
+    }, 1800);
+
+    return () => clearTimeout(timer);
+  }, [isLoading, isLoggedIn]);
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <View style={styles.container}>
+      <Animated.View
+        style={[
+          styles.content,
+          {
+            opacity: fadeAnim,
+            transform: [{ scale: scaleAnim }],
+          },
+        ]}
+      >
+        <PopMartLogo size="large" variant="red" />
+        <Text style={styles.tagline}>LOYALTY & REWARDS</Text>
+      </Animated.View>
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      <View style={styles.footer}>
+        <View style={styles.loadingBarContainer}>
+          <Animated.View style={styles.loadingBar} />
+        </View>
+        <Text style={styles.versionText}>POP MART GLOBAL • VIP CLUB</Text>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
   },
-  title: {
-    textAlign: 'center',
+  content: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  code: {
-    textTransform: 'uppercase',
+  tagline: {
+    marginTop: 14,
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#111111',
+    letterSpacing: 3,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  footer: {
+    position: 'absolute',
+    bottom: 48,
+    alignItems: 'center',
+  },
+  loadingBarContainer: {
+    width: 60,
+    height: 3,
+    backgroundColor: '#F1F3F5',
+    borderRadius: 2,
+    overflow: 'hidden',
+    marginBottom: 12,
+  },
+  loadingBar: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: COLORS.primary,
+  },
+  versionText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#9CA3AF',
+    letterSpacing: 1,
   },
 });

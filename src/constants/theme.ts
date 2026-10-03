@@ -1,65 +1,107 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
+﻿export const COLORS = {
+  // Brand colors
+  primary: '#E50012', // Iconic Pop Mart red
+  primaryDark: '#C40010',
+  primaryLight: '#FFF0F0',
+  primaryMuted: 'rgba(229, 0, 18, 0.08)',
+  
+  // Accent yellow (from Figma buttons)
+  accent: '#FED700',
+  accentDark: '#E6C200',
+  accentLight: '#FFF9D2',
+  
+  // Neutral tones
+  background: '#F8F9FA',
+  backgroundLight: '#FFFFFF',
+  surface: '#FFFFFF',
+  surfaceSecondary: '#F3F4F6',
+  surfaceTertiary: '#EAECEF',
+  
+  // Dark mode / QR screen dark palette
+  darkBg: '#0A0A0A',
+  darkSurface: '#161616',
+  darkCard: '#1E1E1E',
+  darkBorder: '#2E2E2E',
+  
+  // Typography
+  textPrimary: '#111111',
+  textSecondary: '#666666',
+  textMuted: '#9E9E9E',
+  textInverted: '#FFFFFF',
+  textDarkMuted: '#A0A0A0',
+  
+  // Status colors
+  success: '#34C759',
+  successLight: '#E8F8EE',
+  warning: '#FF9500',
+  warningLight: '#FFF5E6',
+  error: '#FF3B30',
+  errorLight: '#FFEEEE',
+  info: '#007AFF',
+  infoLight: '#EBF4FF',
+  
+  // Borders & Dividers
+  border: '#E9ECEF',
+  borderLight: '#F1F3F5',
+  borderFocus: '#111111',
+  
+  // Interactive
+  link: '#007AFF',
+  disabled: '#D1D5DB',
+  disabledText: '#9CA3AF',
+  overlay: 'rgba(0, 0, 0, 0.6)',
+  toastBg: '#2C2C2E',
+};
 
-import '@/global.css';
+export const SPACING = {
+  xxs: 2,
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 20,
+  xxl: 24,
+  xxxl: 32,
+  huge: 48,
+};
 
-import { Platform } from 'react-native';
+export const RADIUS = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 20,
+  xxl: 24,
+  pill: 9999,
+};
 
-export const Colors = {
-  light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
+export const SHADOWS = {
+  small: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
+  medium: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 4,
   },
-} as const;
-
-export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
-
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
+  large: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.12,
+    shadowRadius: 18,
+    elevation: 8,
   },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
+  floating: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.16,
+    shadowRadius: 24,
+    elevation: 12,
   },
-  web: {
-    sans: 'var(--font-display)',
-    serif: 'var(--font-serif)',
-    rounded: 'var(--font-rounded)',
-    mono: 'var(--font-mono)',
-  },
-});
-
-export const Spacing = {
-  half: 2,
-  one: 4,
-  two: 8,
-  three: 16,
-  four: 24,
-  five: 32,
-  six: 64,
-} as const;
-
-export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
-export const MaxContentWidth = 800;
+};

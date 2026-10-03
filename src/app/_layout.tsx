@@ -1,18 +1,78 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+﻿import React from 'react';
+import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AuthProvider, useAuth } from '../context/AuthContext';
+import { Toast } from '../components/Toast';
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+function RootLayoutNav() {
+  const { toastMessage, hideToast } = useAuth();
 
-SplashScreen.preventAutoHideAsync();
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
+    <>
+      <StatusBar style="dark" />
+      <Toast message={toastMessage} onHide={hideToast} />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: '#F8F9FA' },
+          animation: 'fade',
+        }}
+      >
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="welcome" options={{ headerShown: false }} />
+        <Stack.Screen name="login" options={{ headerShown: false }} />
+        <Stack.Screen name="register" options={{ headerShown: false }} />
+        <Stack.Screen name="verify-code" options={{ headerShown: false }} />
+        <Stack.Screen name="register-success" options={{ headerShown: false }} />
+        <Stack.Screen name="forgot-password" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="update-phone"
+          options={{
+            presentation: 'modal',
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="update-dob"
+          options={{
+            presentation: 'modal',
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="change-password"
+          options={{
+            presentation: 'card',
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="notification-settings"
+          options={{
+            presentation: 'card',
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="settings"
+          options={{
+            presentation: 'card',
+            headerShown: false,
+          }}
+        />
+      </Stack>
+    </>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <SafeAreaProvider>
+      <AuthProvider>
+        <RootLayoutNav />
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }
