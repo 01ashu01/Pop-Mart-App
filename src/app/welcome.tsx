@@ -30,14 +30,14 @@ export default function WelcomeScreen() {
         </View>
 
         {/* Figurines Floating Montage Illustration */}
-        <View style={styles.figurinesGrid}>
+         <View style={styles.figurinesGrid}>
           {/* Central Peak Figurine */}
           <View style={[styles.figurineBadge, styles.posPeak]}>
             <Text style={styles.figurineEmoji}>🦁</Text>
             <View style={styles.cloudPill}>
               <Text style={styles.cloudText}>POP MART</Text>
             </View>
-          </View>
+          </View> 
 
           {/* Left Wing Figurine */}
           <View style={[styles.figurineBadge, styles.posLeft1]}>
@@ -78,7 +78,7 @@ export default function WelcomeScreen() {
           <View style={[styles.figurineBadge, styles.posBottomRight]}>
             <Text style={styles.figurineEmoji}>🍼</Text>
           </View>
-        </View>
+        </View> 
 
         {/* Curved Swoop SVG into white background */}
         <View style={styles.curveContainer}>
@@ -94,7 +94,7 @@ export default function WelcomeScreen() {
             />
           </Svg>
         </View>
-      </View>
+      </View>  
 
       {/* Bottom White Action Card */}
       <View style={[styles.contentCard, { paddingBottom: Math.max(insets.bottom, 24) }]}>
@@ -105,7 +105,15 @@ export default function WelcomeScreen() {
           </Text>
         </View>
 
-        <View style={styles.buttonContainer}>
+        
+          <View style={styles.loginRow}>
+            <Text style={styles.alreadyText}>Already have an account? </Text>
+            <TouchableOpacity activeOpacity={0.7} onPress={() => router.push('/login')}>
+              <Text style={styles.loginLink}>Login now</Text>
+            </TouchableOpacity>
+          </View>
+
+         <View style={styles.buttonContainer}>
           <Button
             title="Sign Up"
             onPress={() => router.push('/register')}
@@ -113,12 +121,6 @@ export default function WelcomeScreen() {
             size="lg"
           />
 
-          <View style={styles.loginRow}>
-            <Text style={styles.alreadyText}>Already have an account? </Text>
-            <TouchableOpacity activeOpacity={0.7} onPress={() => router.push('/login')}>
-              <Text style={styles.loginLink}>Login now</Text>
-            </TouchableOpacity>
-          </View>
         </View>
       </View>
     </View>

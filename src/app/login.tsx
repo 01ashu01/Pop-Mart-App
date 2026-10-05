@@ -272,13 +272,14 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     paddingHorizontal: SPACING.md,
-    fontSize: 13,
+    fontSize: 12,
     color: '#9CA3AF',
     textTransform: 'lowercase',
   },
   formSection: {
     marginBottom: SPACING.lg,
-  },
+    
+   },
   forgotBtn: {
     alignSelf: 'flex-end',
     marginBottom: SPACING.lg,

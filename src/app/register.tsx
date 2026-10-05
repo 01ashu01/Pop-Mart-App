@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
+import { GoogleAuthModal } from '../components/GoogleAuthModal';
+import { useAuth } from '../context/AuthContext';
 import { COLORS, SPACING, RADIUS } from '../constants/theme';
 
 export default function RegisterScreen() {
@@ -35,6 +37,9 @@ export default function RegisterScreen() {
     password?: string;
     confirmPassword?: string;
   }>({});
+
+  const { loginWithGoogle } = useAuth();
+  const [googleModalVisible, setGoogleModalVisible] = useState(false);
 
   const handleNext = () => {
     const newErrors: typeof errors = {};
@@ -70,6 +75,9 @@ export default function RegisterScreen() {
     }
 
     setErrors({});
+    // Generate real 6-digit OTP for this session
+    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+
     // Navigate to Verification Code screen with parameters
     router.push({
       pathname: '/verify-code',
@@ -77,10 +85,17 @@ export default function RegisterScreen() {
         firstName,
         lastName,
         email,
-        phone: `+65 ${phone}`,
+        phone: phone.startsWith('+') ? phone : `+65 ${phone}`,
         dob,
+        expectedOtp: generatedOtp,
       },
     });
+  };
+
+  const handleGoogleSuccess = async (googleEmail: string, googleName: string) => {
+    setGoogleModalVisible(false);
+    await loginWithGoogle(googleEmail, googleName);
+    router.replace('/(tabs)');
   };
 
   return (
@@ -127,7 +142,7 @@ export default function RegisterScreen() {
         <View style={styles.socialSection}>
           <Button
             title="Continue with Google"
-            onPress={() => {}}
+            onPress={() => setGoogleModalVisible(true)}
             variant="social"
             size="md"
             icon={<Ionicons name="logo-google" size={18} color="#EA4335" />}
@@ -161,12 +176,14 @@ export default function RegisterScreen() {
         {/* Form Fields Matching Figma */}
         <View style={styles.formSection}>
           {/* First Name & Last Name Side by Side */}
-          <View style={styles.nameRow}>
-            <View style={styles.nameCol}>
+
+              <View style={styles.nameRow}>
+                <View style={styles.nameCol}>
               <Input
                 label="First Name"
                 placeholder="Jason"
                 value={firstName}
+                style={{color:"red"}}
                 onChangeText={(text) => {
                   setFirstName(text);
                   if (errors.firstName) setErrors({ ...errors, firstName: undefined });
@@ -273,6 +290,12 @@ export default function RegisterScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <GoogleAuthModal
+        visible={googleModalVisible}
+        onClose={() => setGoogleModalVisible(false)}
+        onSuccess={handleGoogleSuccess}
+      />
     </KeyboardAvoidingView>
   );
 }
@@ -354,20 +377,27 @@ const styles = StyleSheet.create({
   dividerText: {
     paddingHorizontal: SPACING.md,
     fontSize: 13,
-    color: '#9CA3AF',
+    color: 'Regular',
     textTransform: 'lowercase',
   },
   formSection: {
     marginTop: SPACING.xs,
   },
-  nameRow: {
+
+  nameCol: {
+    flex: 1,
+    color:"#999999"
+    
+  },
+
+   nameRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: SPACING.md,
+     
   },
-  nameCol: {
-    flex: 1,
-  },
+
+
   nextBtn: {
     marginTop: SPACING.md,
   },

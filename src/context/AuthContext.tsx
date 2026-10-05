@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User, PopIcon, Reward, RedeemedReward, NotificationItem, Transaction } from '../types';
 import { INITIAL_USER, POP_ICONS, REWARDS, NOTIFICATIONS, TRANSACTIONS } from '../constants/mockData';
@@ -17,6 +17,8 @@ interface AuthContextType {
   showToast: (msg: string) => void;
   hideToast: () => void;
   login: (identifier: string, pass: string) => Promise<{ success: boolean; error?: string }>;
+  loginWithGoogle: (email: string, name: string) => Promise<{ success: boolean; error?: string }>;
+  loginWithPhoneOtp: (phone: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   register: (data: {
     firstName: string;
@@ -117,12 +119,79 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     try {
+      if (user) {
+        const isEmail = identifier.includes('@');
+        const updated = {
+          ...user,
+          email: isEmail ? identifier : user.email,
+          phone: !isEmail ? identifier : user.phone,
+        };
+        setUser(updated);
+        await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updated));
+      }
       setIsLoggedIn(true);
       await AsyncStorage.setItem(STORAGE_KEYS.AUTH, 'true');
       showToast('Welcome back to POP MART!');
       return { success: true };
     } catch (err) {
       return { success: false, error: 'Failed to sign in' };
+    }
+  };
+
+  const loginWithGoogle = async (email: string, name: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const parts = name.split(' ');
+      const firstName = parts[0] || 'Google';
+      const lastName = parts.slice(1).join(' ') || 'User';
+
+      const googleUser: User = {
+        id: `usr_g_${Date.now().toString().slice(-6)}`,
+        name: name,
+        firstName,
+        lastName,
+        email: email,
+        emailVerified: true,
+        phone: user?.phone || '+65 9888 8888',
+        phoneVerified: true,
+        dob: user?.dob || '01 April 2001',
+        avatarId: 'molly',
+        membershipTier: user?.membershipTier || 'Gold',
+        points: user?.points || 2450,
+        pointsToNextTier: user?.pointsToNextTier || 550,
+        nextTier: user?.nextTier || 'Platinum',
+        tierProgress: user?.tierProgress || 0.81,
+        memberSince: user?.memberSince || 'October 2026',
+        memberCode: user?.memberCode || `PM-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`,
+        inAppNotifications: true,
+        newsletter: true,
+      };
+
+      setUser(googleUser);
+      setIsLoggedIn(true);
+      await Promise.all([
+        AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(googleUser)),
+        AsyncStorage.setItem(STORAGE_KEYS.AUTH, 'true'),
+      ]);
+      showToast(`Signed in as ${name}`);
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: 'Google sign-in failed' };
+    }
+  };
+
+  const loginWithPhoneOtp = async (phone: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      if (user) {
+        const updated = { ...user, phone, phoneVerified: true };
+        setUser(updated);
+        await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updated));
+      }
+      setIsLoggedIn(true);
+      await AsyncStorage.setItem(STORAGE_KEYS.AUTH, 'true');
+      showToast('Phone number verified successfully!');
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: 'Phone verification failed' };
     }
   };
 
@@ -408,6 +477,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         showToast,
         hideToast,
         login,
+        loginWithGoogle,
+        loginWithPhoneOtp,
         logout,
         register,
         updateUser,

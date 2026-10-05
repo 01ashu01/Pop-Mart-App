@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.textPrimary,
+    color: "#999999",
   },
   verifiedBadge: {
     flexDirection: 'row',
